@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+    <body>
+        <h2>ENS Etherum Name Space</h2>
+        <pre id="log"></pre>
+        <pre id="log2"></pre>
+        <script type="text/javascript">
+        function log(text, id) {
+            document.getElementById(id).innerHTML += text + "\n";
+        }
+        async function graph() {
+            const query=`
+                {
+                    domains(where: { name : "koios.eth"} ) {
+                        name
+                        owner { id }
+                    }
+                }
+                `
+            const URL = 'https://api.thegraph.com/subgraphs/name/ensdomains/ens';
+            let body = JSON.stringify({query: query});
+            var res=await fetch(URL, {
+                method: 'post',
+                headers: {'Content-Type': 'application.json'},
+                body: body
+            })
+            var json=await res.json()
+            log(JSON.stringify(json), "log")
+        }
+        graph();
+
+        function resolveAfter2Seconds() {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                resolve('resolved');
+                }, 2000);
+            });
+        }
+
+        async function asyncCall() {
+            const result = await resolveAfter2Seconds();
+            log(await result, "log2");
+        }
+
+        asyncCall();
+
+        </script>
+    </body>
